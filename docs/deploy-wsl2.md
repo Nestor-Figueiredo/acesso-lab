@@ -27,7 +27,7 @@ o share `[alunos]` em `/srv/samba/alunos`, o sudoers NOPASSWD, e escreve
 No `/etc/acesso_lab/config` (criado pelo script), preencha:
 ```
 google_client_id=xxxx.apps.googleusercontent.com
-google_client_secret=GOCSPX-xxxx
+google_client_secret=<coloque-aqui-o-seu-client-secret>
 ```
 Crie as credenciais OAuth2 no Console do Google Cloud:
 - Projeto: `gen-lang-client-0262377533` (ou um novo da escola)
