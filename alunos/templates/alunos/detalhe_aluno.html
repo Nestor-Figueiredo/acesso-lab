@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load alunos_extras %}
+{% block title %}{{ aluno.nome }}{% endblock %}
+{% block content %}
+<nav><a href="{% url 'lista_alunos' %}">← Alunos</a></nav>
+<h3 class="mt-2 mb-3">{{ aluno.nome }}
+  {% if aluno.ativo %}<span class="badge badge-ok">ATIVO</span>
+  {% else %}<span class="badge badge-off">BLOQUEADO</span>{% endif %}
+</h3>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-header"><strong>Dados</strong></div>
+      <div class="card-body">
+        <p><strong>Email:</strong> {{ aluno.email }}</p>
+        <p><strong>RA:</strong> {{ aluno.ra|default:"—" }}</p>
+        <p><strong>Turma:</strong> {{ aluno.turma|default:"—" }}</p>
+        <p><strong>Login Linux/SSH/Samba:</strong> <code>{{ aluno.username_linux|default:"(sem conta ainda)" }}</code></p>
+        <p><strong>Disciplinas:</strong>
+          {% for d in aluno.disciplinas.all %}<span class="badge bg-secondary me-1">{{ d.nome }}</span>{% empty %}—{% endfor %}
+        </p>
+        <div class="mt-3">
+          <a class="btn btn-primary" href="{% url 'provisionar_conta' aluno.pk %}">🛠️ Provisionar conta (Linux+Samba+MySQL)</a>
+        </div>
+        <form method="post" action="{% url 'alternar_ativo' aluno.pk %}" class="mt-2 d-inline">
+          {% csrf_token %}
+          {% if aluno.ativo %}
+            <button class="btn btn-danger btn-sm" onclick="return confirm('Bloquear o acesso SSH+Samba deste aluno?')">🔒 Bloquear acesso</button>
+          {% else %}
+            <button class="btn btn-success btn-sm">🔓 Reativar acesso</button>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-header"><strong>Autorização por recurso</strong></div>
+      <div class="card-body">
+        <form method="post" action="{% url 'salvar_acesso_aluno' aluno.pk %}">
+          {% csrf_token %}
+          {% for r in recursos %}
+          {% with acesso=aluno.acessos|filter_recurso:r.pk %}
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" name="recurso_{{ r.pk }}" value="1"
+                   id="r{{ r.pk }}" {% if acesso.ativo %}checked{% endif %}>
+            <label class="form-check-label" for="r{{ r.pk }}">
+              {{ r.nome }} <span class="text-muted2">({{ r.get_tipo_display }})</span>
+            </label>
+          </div>
+          {% endwith %}
+          {% empty %}<span class="text-muted2">Nenhum recurso cadastrado.</span>{% endfor %}
+          <button class="btn btn-sm btn-primary mt-3">Salvar autorizações</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><strong>Acessos provisionados</strong></div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead><tr><th>Recurso</th><th>Status</th><th>Login/Parâmetro</th><th>Senha do recurso</th></tr></thead>
+      <tbody>
+        {% for ac in acessos %}
+        <tr>
+          <td>{{ ac.recurso.nome }}</td>
+          <td>{% if ac.ativo %}<span class="badge badge-ok">AUTORIZADO</span>{% else %}<span class="badge badge-off">NÃO</span>{% endif %}</td>
+          <td class="mono text-muted2">{{ ac.recurso.valor|default:"—" }}</td>
+          <td class="mono">{{ ac.senha_recurso|default:"—" }}</td>
+        </tr>
+        {% empty %}<tr><td colspan="4" class="text-muted2">Nenhum acesso provisionado. Clique em "Provisionar conta".</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

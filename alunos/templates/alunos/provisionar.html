@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Provisionar {{ aluno.nome }}{% endblock %}
+{% block content %}
+<nav><a href="{% url 'detalhe_aluno' aluno.pk %}">← {{ aluno.nome }}</a></nav>
+<h3 class="mt-2 mb-3">🛠️ Provisionar conta de {{ aluno.nome }}</h3>
+{% if aluno.username_linux %}
+  <div class="alert alert-info">Login Linux já definido: <code>{{ aluno.username_linux }}</code> (este será o login SSH e Samba do aluno).</div>
+{% endif %}
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header"><strong>Criar/atualizar conta no servidor</strong></div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Senha SSH/Samba (mesma para os dois) — mínimo 8 chars</label>
+            <input type="text" name="senha_ssh" class="form-control mono" required minlength="8"
+                   placeholder="senha que o aluno usará no SSH e no Samba">
+            <div class="form-text">Será aplicada no usuário Linux (SSH) e no Samba. A senha do database MySQL é gerada automaticamente.</div>
+          </div>
+          <button class="btn btn-primary">🚀 Provisionar agora</button>
+        </form>
+        <p class="text-muted2 mt-3 small">
+          Será: criação do usuário Linux + senha SSH + senha Samba (idênticas) + database MySQL
+          <code>aluno_{{ aluno.username_linux|default:"<login>" }}</code> + pasta do aluno no share.
+        </p>
+      </div>
+    </div>
+  </div>
+  {% if resultado %}
+  <div class="col-md-6">
+    <div class="card border-success">
+      <div class="card-header bg-success text-white"><strong>✅ Conta provisionada — entregue ao aluno</strong></div>
+      <div class="card-body">
+        <p class="mono small">
+          <strong>SSH:</strong> ssh {{ resultado.username }}@&lt;servidor&gt;<br>
+          <strong>Senha SSH/Samba:</strong> <code>{{ resultado.senha_ssh }}</code><br>
+          <strong>Samba:</strong> \\servidor\{{ resultado.username }}<br>
+          <strong>MySQL:</strong> database <code>{{ resultado.database }}</code><br>
+          <strong>Usuário MySQL:</strong> <code>{{ resultado.db_user }}</code><br>
+          <strong>Senha MySQL:</strong> <code>{{ resultado.senha_db }}</code><br>
+          <strong>Grupos:</strong> {{ resultado.grupos|join:", " }}
+        </p>
+        <div class="alert alert-warning small mb-0">⚠️ Anote e entregue estas credenciais ao aluno. A senha MySQL não é reexibida depois de sair desta página.</div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

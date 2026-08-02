@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.log
+*.sqlite3
+db.sqlite3
+
+# Venv / env
+venv/
+.venv/
+.env
+.env.*
+
+# Credenciais — NUNCA versionar (ficam em /etc/acesso_lab/config fora do repo)
+*.pem
+*.key
+config
+/etc/
+
+# Django
+staticfiles/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp

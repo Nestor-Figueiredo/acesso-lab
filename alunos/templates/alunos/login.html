@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Entrar{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5">
+    <div class="card shadow">
+      <div class="card-header"><strong>Entrar no Laboratório</strong></div>
+      <div class="card-body">
+        <p class="text-muted2">Acesse com sua conta Google da escola (<code>@escola.edu.br</code>).</p>
+        <a href="{{ google_url }}" class="btn btn-primary w-100 py-2">
+          🔑 Entrar com Google @escola.edu.br
+        </a>
+        <hr class="my-4">
+        <p class="text-center mb-1"><strong>Sou aluno e esqueci minha senha SSH/Samba</strong></p>
+        <a href="{% url 'recuperar_senha' %}" class="btn btn-outline-light w-100">🔄 Recuperar senha do acesso</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

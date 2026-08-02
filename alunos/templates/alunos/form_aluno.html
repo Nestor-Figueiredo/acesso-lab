@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Novo Aluno{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6">
+  <div class="card">
+    <div class="card-header"><strong>Novo aluno</strong></div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Nome completo</label>
+          <input name="nome" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email Google (@escola.edu.br)</label>
+          <input name="email" type="email" class="form-control" required placeholder="aluno@escola.edu.br">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">RA/Matrícula</label>
+          <input name="ra" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Turma</label>
+          <select name="turma" class="form-select">
+            <option value="">— Sem turma —</option>
+            {% for t in turmas %}<option value="{{ t.pk }}">{{ t.nome }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Disciplinas matriculadas</label>
+          <div class="border rounded p-2">
+            {% for d in disciplinas %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="disciplinas" value="{{ d.pk }}" id="d{{ d.pk }}">
+              <label class="form-check-label" for="d{{ d.pk }}">{{ d.nome }}</label>
+            </div>
+            {% empty %}<span class="text-muted2">Nenhuma disciplina cadastrada.</span>{% endfor %}
+          </div>
+        </div>
+        <button class="btn btn-primary">Salvar aluno</button>
+        <a class="btn btn-outline-light" href="{% url 'lista_alunos' %}">Voltar</a>
+      </form>
+    </div>
+  </div>
+</div></div>
+{% endblock %}

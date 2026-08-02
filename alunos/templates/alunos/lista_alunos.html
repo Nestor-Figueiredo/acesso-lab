@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Alunos{% endblock %}
+{% block content %}
+<h3 class="mb-3">👩‍🎓 Alunos</h3>
+<div class="mb-3"><a class="btn btn-primary" href="{% url 'criar_aluno' %}">➕ Novo aluno</a></div>
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Nome</th><th>RA</th><th>Login Linux</th><th>Turma</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody>
+        {% for a in alunos %}
+        <tr>
+          <td>{{ a.nome }}</td>
+          <td>{{ a.ra|default:"—" }}</td>
+          <td class="mono text-muted2">{{ a.username_linux|default:"<i>sem conta</i>"|safe }}</td>
+          <td>{{ a.turma|default:"—" }}</td>
+          <td>
+            {% if a.ativo %}<span class="badge badge-ok">ATIVO</span>
+            {% else %}<span class="badge badge-off">BLOQUEADO</span>{% endif %}
+          </td>
+          <td>
+            <a class="btn btn-sm btn-outline-light" href="{% url 'detalhe_aluno' a.pk %}">Ver</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-muted2">Nenhum aluno cadastrado ainda.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

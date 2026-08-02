@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Recuperar senha{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-4"><div class="col-md-5">
+  <div class="card">
+    <div class="card-header"><strong>🔄 Recuperar senha SSH/Samba</strong></div>
+    <div class="card-body">
+      <p class="text-muted2">
+        Informe o email Google (<code>@escola.edu.br</code>) que você usa no laboratório e defina uma nova
+        senha. Ela será aplicada <strong>no SSH e no Samba</strong> (a mesma).
+      </p>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Email Google @escola.edu.br</label>
+          <input name="email" type="email" class="form-control" required placeholder="aluno@escola.edu.br">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Nova senha (mínimo 8 caracteres)</label>
+          <input name="nova_senha" type="text" class="form-control mono" required minlength="8">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Confirmar nova senha</label>
+          <input name="confirmar" type="text" class="form-control mono" required>
+        </div>
+        <button class="btn btn-primary w-100">Redefinir senha SSH/Samba</button>
+      </form>
+      <p class="mt-3 text-center"><a href="{% url 'login' %}">← Voltar ao login</a></p>
+    </div>
+  </div>
+</div></div>
+{% endblock %}

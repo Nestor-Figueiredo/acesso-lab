@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h1 class="display-5">{{ qtd_alunos }}</h1>
+        <div class="text-muted2">Alunos cadastrados</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h1 class="display-5">{{ qtd_ativos }}</h1>
+        <div class="text-muted2">Com acesso ativo</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h1 class="display-5">{{ qtd_turmas }}</h1>
+        <div class="text-muted2">Turmas</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h1 class="display-5">{{ qtd_disciplinas }}</h1>
+        <div class="text-muted2">Disciplinas</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header"><strong>Recursos do sistema</strong></div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Recurso</th><th>Tipo</th><th>Alvo</th></tr></thead>
+          <tbody>
+            {% for r in recursos %}
+            <tr>
+              <td>{{ r.nome }}</td>
+              <td>{{ r.get_tipo_display }}</td>
+              <td class="mono text-muted2">{{ r.valor|default:"—" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-muted2">Nenhum recurso cadastrado.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header"><strong>Turmas</strong></div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Turma</th><th>Período</th><th>Alunos</th></tr></thead>
+          <tbody>
+            {% for t in turmas %}
+            <tr>
+              <td>{{ t.nome }}</td>
+              <td>{{ t.periodo|default:"—" }}</td>
+              <td>{{ t.alunos.count }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-muted2">Nenhuma turma.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4">
+  <a class="btn btn-primary" href="{% url 'criar_aluno' %}">➕ Novo aluno</a>
+  <a class="btn btn-outline-light ms-2" href="/admin/">⚙️ Django Admin completo</a>
+</div>
+{% endblock %}
