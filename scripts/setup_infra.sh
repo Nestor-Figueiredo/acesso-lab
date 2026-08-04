@@ -69,9 +69,19 @@ sudo visudo -c || echo "⚠️  sudoers com problema — revise!" || true
 
 echo "==> [7/7] Config do app em /etc/acesso_lab/config (não versionada)"
 sudo mkdir -p /etc/acesso_lab
+
+# Gera a SECRET_KEY e VALIDA que não ficou vazia (evita o erro
+# 'ImproperlyConfigured: The SECRET_KEY setting must not be empty' quando o
+# config é gravado sem a chave — ex.: se python3/secrets falhar).
+SECRET_KEY="$(python3 -c 'import secrets;print(secrets.token_urlsafe(48))')"
+if [ -z "${SECRET_KEY}" ]; then
+  echo "!! ERRO: não foi possível gerar a SECRET_KEY (secrets falhou). Abortando sem gravar config vazio." >&2
+  exit 1
+fi
+
 sudo bash -c "cat > /etc/acesso_lab/config <<EOFC
 # Config acesso_lab - NÃO versionar (fora do repo). Padrão SIM808/RouterLog.
-secret_key=$(python3 -c 'import secrets;print(secrets.token_urlsafe(48))')
+secret_key=${SECRET_KEY}
 db_name=${APP_DB}
 db_user=${APP_USER}
 db_pass=${SENHA_DB}
@@ -81,6 +91,12 @@ google_allowed_domain=escola.edu.br
 lab_samba_group=alunos
 lab_samba_share_root=/srv/samba/alunos
 EOFC"
+
+# Validação pós-escrita: garante que a linha secret_key foi gravada preenchida.
+if ! sudo grep -q "^secret_key=." /etc/acesso_lab/config; then
+  echo "!! ERRO: /etc/acesso_lab/config foi gerado com secret_key vazia. Revise." >&2
+  exit 1
+fi
 sudo chown root:"$usuario_django" /etc/acesso_lab/config
 sudo chmod 640 /etc/acesso_lab/config
 
